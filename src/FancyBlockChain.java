@@ -50,14 +50,48 @@ public class FancyBlockChain {
 
     public boolean addBlock(Block newBlock) {
         int currIndex = 0;
-        if (this.length() < this.bchain.length()) {
+        if (this.length() < this.bchain.length()) { //newblock at end
             newBlock.index = this.length();
             this.bchain[this.length()] = newBlock;
             currIndex = this.length();
             this.length++;
         }
-        else if (this.bchain[0].timestamp < newBlock.timestamp) {
+        else if (this.bchain[0].timestamp < newBlock.timestamp) { //newblock at start
             this.bchain[0].removed = true;
+            this.bchain[0] = newBlock;
+            newBlock.index = 0;
+            Block tempBlock = null;
+            int leftchildindex = (2 * currIndex) + 1;
+            int rightchildindex = (2 * currIndex) + 2;
+            while (leftchildindex < this.length()) { //while currIndex has left kid, i.e. not end of list
+                if ((rightchildindex < this.length()) && //right child exists
+                        (this.bchain[rightchildindex] < this.bchain[leftchildindex]) && //right key is less than left key
+                        (this.bchain[currIndex] > this.bchain[rightchildindex])) { //currIndex key is more than right key
+                    //swap currIndex and right node, update currIndex
+                    tempBlock = this.bchain[rightchildindex];
+                    this.bchain[rightchildindex] = this.bchain[currIndex];
+                    this.bchain[currIndex] = tempBlock;
+                    this.bchain[currIndex].index = rightchildindex; //update index
+                    this.bchain[rightchildindex].index = currIndex; //update index
+                    currIndex = rightchildindex;
+                } else if (this.bchain[currIndex] > this.bchain[leftchildindex]) { //currIndex key is greater than left key
+                    //swap currIndex and left node, update currIndex
+                    tempBlock = this.bchain[leftchildindex];
+                    this.bchain[leftchildindex] = this.bchain[currIndex];
+                    this.bchain[currIndex] = tempBlock;
+                    this.bchain[currIndex].index = leftchildindex;
+                    this.bchain[leftchildindex].index = currIndex;
+                    currIndex = leftchildindex;
+                }
+                else { //node is in right place
+                    break;
+                }
+                leftchildindex = (2 * currIndex) + 1; //update child pointers
+                rightchildindex = (2 * currIndex) + 2;
+            }
+        }
+        else { //newblock dont fit
+            return false;
         }
     }
     public Block getEarliestBlock() {
