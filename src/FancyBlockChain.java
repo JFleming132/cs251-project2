@@ -54,7 +54,20 @@ public class FancyBlockChain {
             newBlock.index = this.length();
             this.bchain[this.length()] = newBlock;
             currIndex = this.length();
+            Block tempBlock = null;
             this.length++;
+            while (currIndex != 0) {
+                if (this.bchain[(currIndex - 1) / 2] > this.bchain[currIndex]) {
+                    tempBlock = this.bchain[currIndex];
+                    this.bchain[currIndex] = this.bchain[(currIndex - 1) / 2];
+                    this.bchain[currIndex].index = (currIndex - 1) / 2;
+                    this.bchain[(currIndex - 1) / 2] = tempBlock;
+                    this.bchain[(currIndex - 1) / 2].index = currIndex;
+                    currIndex = (currIndex - 1) / 2;
+                } else {
+                    break;
+                }
+            }
         }
         else if (this.bchain[0].timestamp < newBlock.timestamp) { //newblock at start
             this.bchain[0].removed = true;
