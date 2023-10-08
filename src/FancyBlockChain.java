@@ -17,7 +17,7 @@ public class FancyBlockChain {
         for (Block initialBlock : initialBlocks) {
             addBlock(initialBlock);
         }
-        print();
+        //print();
     }
 
     public int length() {
@@ -31,6 +31,7 @@ public class FancyBlockChain {
             removeEarliestBlock();
         }
         else if (length == capacity) {
+            //System.out.println("returning true");
             return false;
         }
         if (this.length() < capacity) {
@@ -40,86 +41,90 @@ public class FancyBlockChain {
             newBlock.index = length();
             this.bchain[length()] = newBlock;
             length++;
+            newBlock.removed = false;
             makeMinHeap();
             //print();
         }
+        //System.out.println("returning false");
         return true;
     }
     public Block getEarliestBlock() {
         if (length() > 0) {
+            //System.out.println("returning block with data " + bchain[0].data);
             return bchain[0];
         }
+        //System.out.println("returning null");
         return null;
     }
     public Block getBlock(String data) {
         for (int i = 0; i < length(); i++) {
             if (bchain[i].data.equals(data)) {
+                //System.out.println("returning block with data " + bchain[i].data);
                 return bchain[i];
             }
         }
+        //System.out.println("returning null");
         return null;
     }
     public Block removeEarliestBlock() {
         //print();
-        Block returnBlock = null;
-        if (length == 1) {
-            length--;
-            returnBlock = bchain[0];
-            bchain[0] = null;
-            returnBlock.removed = true;
-        }
-        else if (length() > 1) {
-            returnBlock = bchain[0];
-            bchain[0] = bchain[length() - 1];
+        //System.out.println("removing block earliest block");
+        Block returnBlock = getEarliestBlock();
+        if (returnBlock == null) {
+            //System.out.println("returning null");
+            return null;
+        } else {
+            bchain[returnBlock.index] = bchain[length() - 1];
+            bchain[returnBlock.index].index = returnBlock.index;
             bchain[length() - 1] = null;
             length--;
             returnBlock.removed = true;
-            bchain[0].index = 0;
             makeMinHeap();
+            //print();
+            //System.out.println("returning block with data " + returnBlock.data);
+            return returnBlock;
         }
-        //print();
-        return returnBlock;
     }
     public Block removeBlock(String data) {
         //print();
         //System.out.println("removing block w data" + data);
         Block returnBlock = getBlock(data);
         if (returnBlock == null) {
-            //System.out.println("no such block");
+            //System.out.println("returning null");
             return null;
         } else {
-            if (returnBlock.index != (length() - 1)) {
-                bchain[returnBlock.index] = bchain[length() - 1];
-            }
+            bchain[returnBlock.index] = bchain[length() - 1];
+            bchain[returnBlock.index].index = returnBlock.index;
             bchain[length() - 1] = null;
             length--;
             returnBlock.removed = true;
             makeMinHeap();
             //print();
+            //System.out.println("returning block with data " + returnBlock.data);
             return returnBlock;
         }
     }
     public void updateEarliestBlock(double nonce) {
-        bchain[0].nonce = nonce;
-        latestTimestamp++;
-        bchain[0].timestamp = latestTimestamp;
-        Block tempBlock = bchain[length() - 1];
-        bchain[length() - 1] = bchain[0];
-        bchain[0] = tempBlock;
-        makeMinHeap();
+        Block newBlock = removeEarliestBlock();
+        if (newBlock != null) {
+            latestTimestamp++;
+            newBlock.timestamp = latestTimestamp;
+            newBlock.nonce = nonce;
+            addBlock(newBlock);
+        }
     }
     public void updateBlock(String data, double nonce) {
-        Block currentBlock = getBlock(data);
-        if (currentBlock != null) {
-            currentBlock.nonce = nonce;
+        Block newBlock = removeBlock(data);
+        if (newBlock != null) {
             latestTimestamp++;
-            currentBlock.timestamp = latestTimestamp;
-            makeMinHeap();
+            newBlock.timestamp = latestTimestamp;
+            newBlock.nonce = nonce;
+            addBlock(newBlock);
         }
     }
 
     public void makeMinHeap() { //turns the current bchain into a minHeap
-        for (int i = (length() - 1) / 2; i >= 0; i--) {
+        for (int i = (length()/2) - 1; i >= 0; i--) {
             heapify(i);
         }
     }
@@ -139,13 +144,5 @@ public class FancyBlockChain {
             bchain[minimum].index = minimum;
             heapify(minimum);
         }
-    }
-
-    public void print() {
-        System.out.print("The heap has length " + length() + ", capacity " + capacity + ", max timestamp is " + latestTimestamp + ", and is: ");
-        for (int i = 0; i < length(); i++) {
-            System.out.print(bchain[i].timestamp + " ");
-        }
-        System.out.println();
     }
 }
