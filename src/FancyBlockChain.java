@@ -104,6 +104,25 @@ public class FancyBlockChain {
             return returnBlock;
         }
     }
+    public Block removeBlock(int index) {
+        //print();
+        //System.out.println("removing block w index" + index);
+        Block returnBlock = bchain[index];
+        if (returnBlock == null) {
+            //System.out.println("returning null");
+            return null;
+        } else {
+            bchain[returnBlock.index] = bchain[length() - 1];
+            bchain[returnBlock.index].index = returnBlock.index;
+            bchain[length() - 1] = null;
+            length--;
+            returnBlock.removed = true;
+            makeMinHeap();
+            //print();
+            //System.out.println("returning block with data " + returnBlock.data);
+            return returnBlock;
+        }
+    }
     public void updateEarliestBlock(double nonce) {
         Block newBlock = removeEarliestBlock();
         if (newBlock != null) {
