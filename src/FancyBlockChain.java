@@ -17,7 +17,6 @@ public class FancyBlockChain {
         for (Block initialBlock : initialBlocks) {
             addBlock(initialBlock);
         }
-        //print();
     }
 
     public int length() {
@@ -25,13 +24,10 @@ public class FancyBlockChain {
     }
 
     public boolean addBlock(Block newBlock) {
-        //print();
-        //System.out.println("Adding block " + newBlock.timestamp);
         if ((length() == capacity) && (bchain[0].timestamp < newBlock.timestamp)) {
             removeEarliestBlock();
         }
         else if (length == capacity) {
-            //System.out.println("returning true");
             return false;
         }
         if (this.length() < capacity) {
@@ -43,35 +39,26 @@ public class FancyBlockChain {
             length++;
             newBlock.removed = false;
             makeMinHeap();
-            //print();
         }
-        //System.out.println("returning false");
         return true;
     }
     public Block getEarliestBlock() {
         if (length() > 0) {
-            //System.out.println("returning block with data " + bchain[0].data);
             return bchain[0];
         }
-        //System.out.println("returning null");
         return null;
     }
     public Block getBlock(String data) {
         for (int i = 0; i < length(); i++) {
             if (bchain[i].data.equals(data)) {
-                //System.out.println("returning block with data " + bchain[i].data);
                 return bchain[i];
             }
         }
-        //System.out.println("returning null");
         return null;
     }
     public Block removeEarliestBlock() {
-        //print();
-        //System.out.println("removing block earliest block");
         Block returnBlock = getEarliestBlock();
         if (returnBlock == null) {
-            //System.out.println("returning null");
             return null;
         } else {
             bchain[returnBlock.index] = bchain[length() - 1];
@@ -80,17 +67,13 @@ public class FancyBlockChain {
             length--;
             returnBlock.removed = true;
             makeMinHeap();
-            //print();
-            //System.out.println("returning block with data " + returnBlock.data);
+
             return returnBlock;
         }
     }
     public Block removeBlock(String data) {
-        //print();
-        //System.out.println("removing block w data" + data);
         Block returnBlock = getBlock(data);
         if (returnBlock == null) {
-            //System.out.println("returning null");
             return null;
         } else {
             bchain[returnBlock.index] = bchain[length() - 1];
@@ -99,17 +82,12 @@ public class FancyBlockChain {
             length--;
             returnBlock.removed = true;
             makeMinHeap();
-            //print();
-            //System.out.println("returning block with data " + returnBlock.data);
             return returnBlock;
         }
     }
     public Block removeBlock(int index) {
-        //print();
-        //System.out.println("removing block w index" + index);
         Block returnBlock = bchain[index];
         if (returnBlock == null) {
-            //System.out.println("returning null");
             return null;
         } else {
             bchain[returnBlock.index] = bchain[length() - 1];
@@ -118,8 +96,6 @@ public class FancyBlockChain {
             length--;
             returnBlock.removed = true;
             makeMinHeap();
-            //print();
-            //System.out.println("returning block with data " + returnBlock.data);
             return returnBlock;
         }
     }
